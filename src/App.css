@@ -1,0 +1,29 @@
+.project-card {
+  transition: all 0.5s ease-in-out;
+}
+
+.project-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-fadeIn {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 1s forwards;
+}
+
+.animate-fadeIn.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-fadeIn.delay-400 {
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
