@@ -205,7 +205,7 @@ function App() {
           method="POST"
           className="space-y-4 max-w-3xl mx-auto"
         >
-          <input type="hidden" name="access_key" value={import.meta.env.VITE_WEB3FORMS_KEY} />
+          <input type="hidden"  name="access_key" value={import.meta.env.VITE_WEB3FORMS_KEY} />
 
           <div>
             <label className="font-semibold">Your Name *</label>
