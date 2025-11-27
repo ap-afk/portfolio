@@ -1,3 +1,119 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ---------- LIGHT MODE ---------- */
+body.light {
+  background-color: #f4f4f4;
+  color: #000;
+}
+
+/* ---------- DARK MODE ---------- */
+body.dark {
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Navbar */
+.navbar {
+  padding: 15px 20px;
+  background: #0080ff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  background: #0066cc;
+  padding: 10px;
+  text-align: center;
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 8px;
+  color: white;
+}
+
+/* Section */
+.section {
+  padding: 60px 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Cards */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+body.dark .card {
+  background: #1f1f1f;
+  color: white;
+}
+
+/* Buttons */
+.btn {
+  background: #0080ff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Modal */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.modal-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+}
+
+body.dark .modal-box {
+  background: #222;
+  color: white;
+}
+
+/* Theme Button */
+.theme-btn {
+  padding: 6px 15px;
+  border-radius: 6px;
+  background: white;
+  color: #0080ff;
+  font-weight: bold;
+  border: none;
+}
+
+body.dark .theme-btn {
+  background: #222;
+  color: white;
+}

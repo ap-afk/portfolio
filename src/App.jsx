@@ -1,37 +1,39 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
+import { Typewriter } from "react-simple-typewriter";
 import { FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaNodeJs } from "react-icons/fa";
 import { SiTailwindcss } from "react-icons/si";
 
-// Project List
+/* -----------------------------------------
+   Data: projects & skills (same as before)
+----------------------------------------- */
 const projects = [
-  { 
-    title: "Omnimins", 
-    description: "Landing page for a fictional smartwatch brand.", 
-    link: "https://omnimins.netlify.app/", 
+  {
+    title: "Omnimins",
+    description: "Landing page for a fictional smartwatch brand.",
+    link: "https://omnimins.netlify.app/",
     tech: ["HTML", "CSS", "JavaScript"],
   },
-  { 
-    title: "Landing Page Gules Omega", 
-    description: "Built with React and Tailwind CSS.", 
-    link: "https://landing-page-gules-omega.vercel.app/", 
+  {
+    title: "Landing Page Gules Omega",
+    description: "React + Tailwind landing page.",
+    link: "https://landing-page-gules-omega.vercel.app/",
     tech: ["React", "Tailwind CSS"],
   },
-  { 
-    title: "Code Review & Docs", 
-    description: "Improving code quality and writing documentation.", 
-    link: "https://github.com/ap-afk", 
+  {
+    title: "Code Review & Docs",
+    description: "Improving code quality and documentation.",
+    link: "https://github.com/ap-afk",
     tech: ["GitHub", "Documentation"],
   },
-  { 
-    title: "FoodReels", 
-    description: "Recipe exploring app with interactive UI.", 
-    link: "https://foodreels.netlify.app/", 
+  {
+    title: "FoodReels",
+    description: "Recipe exploring app with interactive UI.",
+    link: "https://foodreels.netlify.app/",
     tech: ["React", "API", "CSS"],
   },
 ];
 
-// Skills List
 const skills = [
   { name: "HTML", icon: <FaHtml5 /> },
   { name: "CSS", icon: <FaCss3Alt /> },
@@ -41,125 +43,225 @@ const skills = [
   { name: "Node.js", icon: <FaNodeJs /> },
 ];
 
-function App() {
-  const [visible, setVisible] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const cardRefs = useRef([]);
+/* -----------------------------------------
+   Project Request Form (Web3Forms)
+----------------------------------------- */
+function ProjectRequestForm() {
+  const [loading, setLoading] = useState(false);
+  const [resultMessage, setResultMessage] = useState("");
+  const [showResultModal, setShowResultModal] = useState(false);
 
-  // Scroll animation for project cards
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const index = entry.target.dataset.index;
-            setVisible(prev => [...new Set([...prev, Number(index)])]);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setResultMessage("");
 
-    cardRefs.current.forEach(card => card && observer.observe(card));
-    return () => observer.disconnect();
-  }, []);
+    const formData = new FormData(event.target);
+    formData.append("access_key", import.meta.env.VITE_WEB3FORMS_KEY);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResultMessage("🎉 Your project request has been sent!");
+        event.target.reset();
+      } else {
+        setResultMessage("❌ " + data.message);
+      }
+    } catch (err) {
+      setResultMessage("❌ Network error: " + err.message);
+    }
+
+    setLoading(false);
+    setShowResultModal(true);
+  };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans scroll-smooth">
-
-      {/* ---------------- NAVBAR ---------------- */}
-      <nav className="fixed top-0 left-0 w-full bg-blue-500 text-white px-6 py-4 flex justify-between items-center shadow-lg z-50">
-
-        {/* Logo */}
-        <div className="font-bold text-xl">Aayushman Singh</div>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-6">
-          <a href="#about" className="hover:underline">About</a>
-          <a href="#projects" className="hover:underline">Projects</a>
-          <a href="#skills" className="hover:underline">Skills</a>
-          <a href="#resume" className="hover:underline">Resume</a>
-          <a href="#project-request" className="hover:underline">Give Project</a>
-          <a href="#contact" className="hover:underline">Contact</a>
+    <>
+      <form onSubmit={onSubmit} className="space-y-4 max-w-3xl mx-auto">
+        <div>
+          <label className="font-semibold">Your Name *</label>
+          <input name="name" required className="w-full border px-4 py-2 rounded bg-white text-black" />
         </div>
 
-        {/* Mobile Menu Button */}
-        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-3xl">
-          ☰
-        </button>
+        <div>
+          <label className="font-semibold">Email *</label>
+          <input type="email" name="email" required className="w-full border px-4 py-2 rounded bg-white text-black" />
+        </div>
 
-        {/* Mobile Dropdown Menu */}
-        {menuOpen && (
-          <div className="
-            absolute top-full left-0 
-            w-full bg-blue-600 text-white 
-            flex flex-col py-4 space-y-4 
-            shadow-xl z-[9999]
-          ">
-            <a onClick={() => setMenuOpen(false)} href="#about" className="text-center py-2 hover:bg-blue-700">About</a>
-            <a onClick={() => setMenuOpen(false)} href="#projects" className="text-center py-2 hover:bg-blue-700">Projects</a>
-            <a onClick={() => setMenuOpen(false)} href="#skills" className="text-center py-2 hover:bg-blue-700">Skills</a>
-            <a onClick={() => setMenuOpen(false)} href="#resume" className="text-center py-2 hover:bg-blue-700">Resume</a>
-            <a onClick={() => setMenuOpen(false)} href="#project-request" className="text-center py-2 hover:bg-blue-700">Give Project</a>
-            <a onClick={() => setMenuOpen(false)} href="#contact" className="text-center py-2 hover:bg-blue-700">Contact</a>
+        <div>
+          <label className="font-semibold">Project Description *</label>
+          <textarea name="message" rows="5" required className="w-full border px-4 py-2 rounded bg-white text-black"></textarea>
+        </div>
+
+        <button className="w-full bg-blue-500 text-white py-3 rounded font-semibold hover:bg-blue-600">
+          {loading ? "Sending..." : "Submit"}
+        </button>
+      </form>
+
+      {/* Success Modal */}
+      {showResultModal && (
+        <div className="modal-bg">
+          <div className="modal-box">
+            <h3 className="text-xl font-bold mb-2">Message</h3>
+            <p>{resultMessage}</p>
+
+            <button className="btn mt-4" onClick={() => setShowResultModal(false)}>
+              Close
+            </button>
           </div>
-        )}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* -----------------------------------------
+   MAIN APP
+----------------------------------------- */
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  /* ---------- DARK/LIGHT MODE USING NORMAL CSS ---------- */
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme") || "light";
+    setTheme(stored);
+    document.body.className = stored;
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : "light";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+    document.body.className = next;
+  };
+
+  /* ---------- PROJECT MODAL ---------- */
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+
+  const openModal = (p) => {
+    setActiveProject(p);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setActiveProject(null);
+  };
+
+  return (
+    <div>
+
+      {/* NAVBAR */}
+      <nav className="navbar shadow-lg">
+        <div className="text-xl font-bold">Aayushman Singh</div>
+
+        <div className="hidden md:flex gap-6">
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#resume">Resume</a>
+          <a href="#project-request">Give Project</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <div className="flex gap-3">
+          <button className="theme-btn" onClick={toggleTheme}>
+            {theme === "light" ? "Dark" : "Light"}
+          </button>
+
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-3xl">☰</button>
+        </div>
       </nav>
 
-      {/* ---------------- HERO SECTION ---------------- */}
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div className="mobile-menu">
+          <a onClick={() => setMenuOpen(false)} href="#about">About</a>
+          <a onClick={() => setMenuOpen(false)} href="#projects">Projects</a>
+          <a onClick={() => setMenuOpen(false)} href="#skills">Skills</a>
+          <a onClick={() => setMenuOpen(false)} href="#resume">Resume</a>
+          <a onClick={() => setMenuOpen(false)} href="#project-request">Give Project</a>
+          <a onClick={() => setMenuOpen(false)} href="#contact">Contact</a>
+        </div>
+      )}
+
+      {/* HERO */}
       <section className="text-center px-6 py-24 bg-blue-400 text-white mt-16">
-        <h1 className="text-5xl font-bold mb-4">Hi, I'm Aayushman</h1>
-        <p className="text-xl mb-6">Aspiring MERN Developer | 7th Grade</p>
-        <a href="#projects" className="bg-white text-blue-500 px-6 py-3 rounded font-semibold hover:bg-gray-200">
-          View Projects
-        </a>
+        <h1 className="text-5xl font-bold">Hi, I'm Aayushman</h1>
+        <h2 className="text-xl mt-4">
+          <Typewriter
+            words={[
+              "MERN Developer",
+              "React Developer",
+              "Frontend Developer",
+              "7th Grade Programmer"
+            ]}
+            loop={0}
+            cursor
+            cursorStyle="|"
+            typeSpeed={70}
+            deleteSpeed={40}
+            delaySpeed={1000}
+          />
+        </h2>
       </section>
 
-      {/* ---------------- ABOUT SECTION ---------------- */}
-      <section id="about" className="max-w-5xl mx-auto bg-white px-6 py-12 rounded shadow mt-12">
-        <h2 className="text-3xl font-bold mb-3">About Me</h2>
-        <p className="text-gray-700">
-          I'm a young web developer learning HTML, CSS, JavaScript, React, Tailwind CSS, and Node.js.
-          I love building real-world projects and learning new skills every day.
-        </p>
+      {/* ABOUT */}
+      <section id="about" className="section">
+        <h2 className="section-title">About Me</h2>
+        <p>I am a passionate young developer learning MERN Stack development.</p>
       </section>
 
-      {/* ---------------- PROJECTS SECTION ---------------- */}
-      <section id="projects" className="max-w-6xl mx-auto px-6 py-12 mt-12">
-        <h2 className="text-4xl font-bold mb-8 text-center">Projects</h2>
+      {/* PROJECTS */}
+      <section id="projects" className="section">
+        <h2 className="section-title">Projects</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((p, i) => (
-            <div
-              key={i}
-              data-index={i}
-              ref={el => (cardRefs.current[i] = el)}
-              className={`bg-white shadow p-6 rounded transform transition duration-500 ${
-                visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
-            >
-              <h3 className="text-xl font-bold mb-2">{p.title}</h3>
-              <p className="text-gray-600 mb-3">{p.description}</p>
+            <div key={i} className="card cursor-pointer hover:shadow-xl" onClick={() => openModal(p)}>
+              <h3 className="font-bold text-xl">{p.title}</h3>
+              <p className="opacity-75 mt-2">{p.description}</p>
 
-              <div className="flex flex-wrap gap-2 mb-4">
-                {p.tech.map((tech, idx) => (
-                  <span key={idx} className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
-                    {tech}
+              <div className="flex gap-2 mt-3">
+                {p.tech.map((t, idx) => (
+                  <span key={idx} className="bg-blue-200 text-blue-600 px-3 py-1 rounded text-sm">
+                    {t}
                   </span>
                 ))}
               </div>
-
-              <a href={p.link} target="_blank" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                View Project
-              </a>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ---------------- SKILLS SECTION ---------------- */}
-      <section id="skills" className="max-w-5xl mx-auto bg-white px-6 py-12 rounded shadow mt-12">
-        <h2 className="text-3xl font-bold mb-4">Skills</h2>
+      {/* PROJECT MODAL */}
+      {modalOpen && activeProject && (
+        <div className="modal-bg">
+          <div className="modal-box">
+            <button onClick={closeModal} className="text-xl float-right font-bold">×</button>
+
+            <h2 className="text-2xl font-bold">{activeProject.title}</h2>
+            <p className="my-3">{activeProject.description}</p>
+
+            <a href={activeProject.link} className="btn w-full mt-3">
+              View Project
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* SKILLS */}
+      <section id="skills" className="section">
+        <h2 className="section-title">Skills</h2>
 
         <div className="flex flex-wrap gap-3">
           {skills.map((s, i) => (
@@ -170,95 +272,24 @@ function App() {
         </div>
       </section>
 
-      {/* ---------------- RESUME SECTION ---------------- */}
-      <section id="resume" className="max-w-5xl mx-auto bg-white px-6 py-12 rounded shadow mt-12">
-        <h2 className="text-3xl font-bold text-center mb-6">Resume</h2>
-
-        <h3 className="text-xl font-semibold mb-2">Summary</h3>
-        <p className="mb-4">
-          A young MERN stack developer passionate about creating modern web applications.
-        </p>
-
-        <h3 className="text-xl font-semibold mb-2">Education</h3>
-        <p className="mb-4">Currently studying in 7th Grade</p>
-
-        <h3 className="text-xl font-semibold mb-2">Projects</h3>
-        <ul className="list-disc pl-6">
-          {projects.map((project, i) => (
-            <li key={i} className="mb-2">
-              <strong>{project.title}</strong> – {project.description}  
-              (<a href={project.link} className="text-blue-500">View</a>)
-            </li>
-          ))}
-        </ul>
+      {/* RESUME */}
+      <section id="resume" className="section">
+        <h2 className="section-title">Resume</h2>
+        <p>7th Grade | MERN Developer | React Learner</p>
       </section>
 
-      {/* ---------------- GIVE PROJECT FORM ---------------- */}
-      <section id="project-request" className="max-w-5xl mx-auto bg-white px-6 py-12 rounded shadow mt-12">
-        <h2 className="text-3xl font-bold text-center mb-3">Give Me a Project</h2>
-        <p className="text-center text-gray-600 mb-8">
-          Fill this form to hire me! I will reply within 24 hours.
-        </p>
-
-        <form
-          action="https://api.web3forms.com/submit"
-          method="POST"
-          className="space-y-4 max-w-3xl mx-auto"
-        >
-          <input type="hidden"  name="access_key" value={import.meta.env.VITE_WEB3FORMS_KEY} />
-
-          <div>
-            <label className="font-semibold">Your Name *</label>
-            <input name="name" required className="w-full border px-4 py-2 rounded" />
-          </div>
-
-          <div>
-            <label className="font-semibold">Email *</label>
-            <input type="email" name="email" required className="w-full border px-4 py-2 rounded" />
-          </div>
-
-          <div>
-            <label className="font-semibold">Project Type *</label>
-            <select name="project_type" required className="w-full border px-4 py-2 rounded">
-              <option>Portfolio Website</option>
-              <option>React Website</option>
-              <option>E-commerce Website</option>
-              <option>Landing Page</option>
-              <option>Full MERN App</option>
-              <option>Other</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="font-semibold">Budget (INR)</label>
-            <input name="budget" placeholder="₹2000 - ₹15000" className="w-full border px-4 py-2 rounded" />
-          </div>
-
-          <div>
-            <label className="font-semibold">Deadline</label>
-            <input type="date" name="deadline" className="w-full border px-4 py-2 rounded" />
-          </div>
-
-          <div>
-            <label className="font-semibold">Project Description *</label>
-            <textarea name="description" rows="5" required className="w-full border px-4 py-2 rounded"></textarea>
-          </div>
-
-          <button className="w-full bg-blue-500 text-white py-3 rounded font-semibold hover:bg-blue-600">
-            Submit Project
-          </button>
-        </form>
+      {/* PROJECT REQUEST FORM */}
+      <section id="project-request" className="section">
+        <h2 className="section-title">Give Me a Project</h2>
+        <ProjectRequestForm />
       </section>
 
-      {/* ---------------- CONTACT SECTION ---------------- */}
-      <section id="contact" className="max-w-5xl mx-auto px-6 py-12 text-center mt-12 mb-12 bg-white shadow rounded">
-        <h2 className="text-3xl font-bold mb-3">Contact</h2>
+      {/* CONTACT */}
+      <section id="contact" className="section text-center">
+        <h2 className="section-title">Contact</h2>
         <p>Email: <a className="text-blue-500" href="mailto:aayushmaansingh726@gmail.com">aayushmaansingh726@gmail.com</a></p>
-        <p>GitHub: <a className="text-blue-500" href="https://github.com/ap-afk">github.com/ap-afk</a></p>
       </section>
 
     </div>
   );
 }
-
-export default App;
